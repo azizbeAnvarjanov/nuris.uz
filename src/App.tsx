@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import { LandingPage } from "./components/LandingPage";
+import { AdminPage } from "./components/AdminPage";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check URL for admin access on mount and when URL changes
+  useEffect(() => {
+    const checkAdminAccess = () => {
+      const params = new URLSearchParams(window.location.search);
+      setIsAdmin(params.get("admin") === "true");
+    };
+
+    checkAdminAccess();
+
+    // Listen for URL changes
+    window.addEventListener("popstate", checkAdminAccess);
+    return () => window.removeEventListener("popstate", checkAdminAccess);
+  }, []);
+
+  const handleAdminToggle = (show: boolean) => {
+    setIsAdmin(show);
+    if (show) {
+      window.history.pushState({}, "", "?admin=true");
+    } else {
+      window.history.pushState({}, "", window.location.pathname);
+    }
+  };
+
+  if (isAdmin) {
+    return <AdminPage onBack={() => handleAdminToggle(false)} />;
+  }
+
+  return <LandingPage onAdminClick={() => handleAdminToggle(true)} />;
 }
-
-export default App;

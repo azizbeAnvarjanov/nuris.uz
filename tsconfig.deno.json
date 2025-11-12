@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
+    "strict": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "types": ["@deno-types/node"]
+  },
+  "include": ["src/supabase/functions/**/*.ts", "src/supabase/functions/**/*.tsx"]
+}
