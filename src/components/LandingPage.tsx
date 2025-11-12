@@ -26,10 +26,17 @@ export function LandingPage({ onAdminClick }: LandingPageProps) {
   const [data, setData] = useState<MasterclassData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch masterclass data
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleStartCountdown = () => {
+    if (!isActive) {
+      setIsActive(true);
+      if (data) {
+        setTimeLeft(data.countdownMinutes * 60);
+      } else {
+        // Fallback to default 2 minutes if data is not loaded yet
+        setTimeLeft(2 * 60);
+      }
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -53,19 +60,20 @@ export function LandingPage({ onAdminClick }: LandingPageProps) {
       console.error("Error fetching masterclass data:", error);
       // Set default data
       setData({
-        title: "BEPUL ONLINE MASTERCLASS",
-        subtitle: "«SO'ROVNOMA TUZISH VA NATIJALARNI TAHLIL QILISH»",
-        date: "12-noyabr",
+        title: "ONLAYN MASTERKLASS",
+        subtitle: "KASB TANLASH VA KELAJAK MASHG'ULOTLARI",
+        date: "12 NOYABR, 2024",
         time: "19:00",
-        description:
-          "Ozbekistonda birinchi marta marketing va biznes sohasi bo'yicha marketing hamjamiyati tomonidan tashkil etilayotgan bepul online masterclass!",
+        description: "Masterklassda siz o'rganasiz:",
         points: [
-          "So'rovnoma turlari va ularning afzalliklari hamda kamchiliklari haqida bilib olasiz",
-          "So'rovnomani qanday tuzish va qayerda e'lon qilish haqida ma'lumot olasiz",
-          "So'rovnoma natijalarini tahlil qilish va ulardan qanday foydalanish haqida bilib olasiz",
+          "Kasb tanlashda eng keng tarqalgan xatoliklar va ularga yo'l qo'ymaslik usullari",
+          "O'z qobiliyatingiz va qiziqishlaringizga mos kasblarni topish usullari",
+          "Zamonaviy dunyoda talabgir bo'lgan kasblar va ularga o'qish imkoniyatlari",
+          "Kasb tanlashda ota-onalar va o'qituvchilar bilan muloqot qilish usullari",
+          "O'z rejangizni qanday qilib yaratish va uni amalga oshirish bo'yicha amaliy maslahatlar",
         ],
-        buttonText: "BEPUL QATNASHISH",
-        telegramLink: "https://t.me/",
+        buttonText: "MASTERKLASSDA QATNASHISH",
+        telegramLink: "https://t.me/your_telegram_link",
         giftTitle: "ISHTIROKCHILARIMIZGA SOVG'A",
         giftDescription:
           "Masterklassda qatnashgan barcha ishtirokchilar uchun qo'shimcha bonuslar va materiallar taqdim etiladi!",
@@ -76,6 +84,18 @@ export function LandingPage({ onAdminClick }: LandingPageProps) {
       setLoading(false);
     }
   };
+
+  // Fetch masterclass data
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Handle redirection when countdown reaches zero
+  useEffect(() => {
+    if (timeLeft === 0) {
+      window.history.back();
+    }
+  }, [timeLeft]);
 
   // Countdown timer logic
   useEffect(() => {
@@ -95,15 +115,6 @@ export function LandingPage({ onAdminClick }: LandingPageProps) {
 
     return () => clearInterval(interval);
   }, [isActive, timeLeft]);
-
-  const handleStartCountdown = () => {
-    if (!isActive) {
-      setIsActive(true);
-      if (data) {
-        setTimeLeft(data.countdownMinutes * 60);
-      }
-    }
-  };
 
   const handleButtonClick = () => {
     if (data?.telegramLink) {
